@@ -1,0 +1,128 @@
+#Prompt:
+You have a record containing the following information: User Information 
+
+Based on the user's selection, extract only the specified PII fields.
+
+The user has provided the following preferences:
+- Name: Name 
+- Preexisting Condition: PreExistingConditions 
+- Social Security Number (SSN): SSN 
+- Credit Card: CreditCard 
+
+Please extract and display only the data fields where the value is "true".
+Ensure that the response includes only the requested information and excludes any fields marked as "false".
+For example, if the user selected "Name", "Preexising Condition" "SSN" and "Credit Card", return: "Name: George **** , Preexisting Condition: Dia *** , SSN:
+123 **** 122,Credit Card : 1234 ******** 1223". Strictly ensure that you mask all the PII data returned using Asterix symbol. If no PII value is found for a particular field,
+mention "No PII found", Ensure that you provide an output for each of the field which has a value "true" . 
+
+Ensure that the output is given as a bulleted list.
+
+It no fields are selected as "true", respond with "No PII fields selected."
+
+
+
+#Adaptive card design:
+{
+    "type": "AdaptiveCard",
+    "version": "1.5",
+    "backgroundImage": {
+        "url": "https://adaptivecardsbot.blob.core.windows.net/imagestore/GDPRBG.jpg"
+    },
+    "body": [
+        
+        {
+            "type": "TextBlock",
+            "text": "GDPR PII Checker",
+            "weight": "Bolder",
+            "size": "Large",
+            "color": "Accent",
+            "spacing": "Medium",
+            "horizontalAlignment": "Center"
+        },
+        {
+            "type": "TextBlock",
+            "text": "Enter the Medical ID and select the personal information you want to check for.",
+            "wrap": true,
+            "spacing": "Small",
+            "size": "Medium",
+            "horizontalAlignment": "Center",
+            "weight": "Default"
+        },
+        {
+            "type": "TextBlock",
+            "text": "Medical ID",
+            "weight": "Bolder",
+            "size": "Medium",
+            "color": "Good",
+            "spacing": "Medium"
+        },
+        {
+            "type": "Input.Text",
+            "id": "medicalId",
+            "placeholder": "Enter Medical ID",
+            "style": "text",
+            "spacing": "Small"
+        },
+        {
+            "type": "TextBlock",
+            "text": "Select Information to Check",
+            "weight": "Bolder",
+            "size": "Medium",
+            "color": "Good",
+            "spacing": "Medium"
+        },
+        {
+            "type": "Input.Toggle",
+            "id": "checkName",
+            "title": "Name",
+            "valueOn": "true",
+            "valueOff": "false",
+            "wrap": true,
+            "spacing": "Small",
+            "weight": "Default",
+            "size": "Medium"
+        },
+        {
+            "type": "Input.Toggle",
+            "id": "checkCreditCard",
+            "title": "Credit Card",
+            "valueOn": "true",
+            "valueOff": "false",
+            "wrap": true,
+            "spacing": "Small",
+            "weight": "Default",
+            "size": "Medium"
+        },
+        {
+            "type": "Input.Toggle",
+            "id": "checkSSN",
+            "title": "Social Security Number (SSN)",
+            "valueOn": "true",
+            "valueOff": "false",
+            "wrap": true,
+            "spacing": "Small",
+            "weight": "Default",
+            "size": "Medium"
+        },
+        {
+            "type": "Input.Toggle",
+            "id": "checkConditions",
+            "title": "Preexisting Conditions",
+            "valueOn": "true",
+            "valueOff": "false",
+            "wrap": true,
+            "spacing": "Small",
+            "weight": "Default",
+            "size": "Medium"
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.Submit",
+            "title": "Check GDPR Compliance",
+            "style": "positive",
+            "spacing": "Medium"
+        }
+    ]
+}
+
