@@ -1,0 +1,468 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    triggerQueries:
+      - check for PII
+      - scan for personal information
+      - detect PII
+      - find sensitive data
+      - identify personal info
+      - PII detection
+      - personal information checker
+      - sensitive data scan
+
+  actions:
+    - kind: AdaptiveCardPrompt
+      id: OcHSxU
+      card: |+
+        {
+            "type": "AdaptiveCard",
+            "version": "1.5",
+            "backgroundImage": {
+                "url": "https://adaptivecardsbot.blob.core.windows.net/imagestore/GDPRBG.jpg"
+            },
+            "body": [
+                
+                {
+                    "type": "TextBlock",
+                    "text": "GDPR PII Checker",
+                    "weight": "Bolder",
+                    "size": "Large",
+                    "color": "Accent",
+                    "spacing": "Medium",
+                    "horizontalAlignment": "Center"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Enter the Medical ID and select the personal information you want to check for.",
+                    "wrap": true,
+                    "spacing": "Small",
+                    "size": "Medium",
+                    "horizontalAlignment": "Center",
+                    "weight": "Default"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Medical ID",
+                    "weight": "Bolder",
+                    "size": "Medium",
+                    "color": "Good",
+                    "spacing": "Medium"
+                },
+                {
+                    "type": "Input.Text",
+                    "id": "medicalId",
+                    "placeholder": "Enter Medical ID",
+                    "style": "text",
+                    "spacing": "Small"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Select Information to Check",
+                    "weight": "Bolder",
+                    "size": "Medium",
+                    "color": "Good",
+                    "spacing": "Medium"
+                },
+                {
+                    "type": "Input.Toggle",
+                    "id": "checkName",
+                    "title": "Name",
+                    "valueOn": "true",
+                    "valueOff": "false",
+                    "wrap": true,
+                    "spacing": "Small",
+                    "weight": "Default",
+                    "size": "Medium"
+                },
+                {
+                    "type": "Input.Toggle",
+                    "id": "checkCreditCard",
+                    "title": "Credit Card",
+                    "valueOn": "true",
+                    "valueOff": "false",
+                    "wrap": true,
+                    "spacing": "Small",
+                    "weight": "Default",
+                    "size": "Medium"
+                },
+                {
+                    "type": "Input.Toggle",
+                    "id": "checkSSN",
+                    "title": "Social Security Number (SSN)",
+                    "valueOn": "true",
+                    "valueOff": "false",
+                    "wrap": true,
+                    "spacing": "Small",
+                    "weight": "Default",
+                    "size": "Medium"
+                },
+                {
+                    "type": "Input.Toggle",
+                    "id": "checkConditions",
+                    "title": "Preexisting Conditions",
+                    "valueOn": "true",
+                    "valueOff": "false",
+                    "wrap": true,
+                    "spacing": "Small",
+                    "weight": "Default",
+                    "size": "Medium"
+                }
+            ],
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Check GDPR Compliance",
+                    "style": "positive",
+                    "spacing": "Medium"
+                }
+            ]
+        }
+
+      output:
+        binding:
+          actionSubmitId: Topic.actionSubmitId
+          checkConditions: Topic.checkConditions
+          checkCreditCard: Topic.checkCreditCard
+          checkName: Topic.checkName
+          checkSSN: Topic.checkSSN
+          medicalId: Topic.medicalId
+
+      outputType:
+        properties:
+          actionSubmitId: String
+          checkConditions: String
+          checkCreditCard: String
+          checkName: String
+          checkSSN: String
+          medicalId: String
+
+    - kind: InvokeConnectorAction
+      id: invokeConnectorAction_6r6bQv
+      input:
+        binding:
+          $filter: =Concatenate("cr640_medicalid eq '",Topic.medicalId,"'")
+          $select: cr640_medicalid,cr640_name,cr640_additionaldetails,cr640_preexistingconditions
+          entityName: cr640_customerdetailses
+          organization: https://crm.dynamics.com
+
+      output:
+        kind: SingleVariableOutputBinding
+        variable: Topic.varCustomerDetails
+
+      connectionReference: cr640_healthcarePiiChecker.shared_commondataserviceforapps.shared-commondataser-e286-4459-995e-3def288bdb33
+      connectionProperties:
+        mode: Invoker
+
+      dynamicOutputSchema:
+        kind: Record
+        properties:
+          @odata.nextLink:
+            displayName: Next link
+            description: The url to fetch next page data.
+            visibility: Advanced
+            order: 1
+            type: String
+
+          value:
+            order: 0
+            type:
+              kind: Table
+              properties:
+                _createdby_value:
+                  displayName: Created By (Value)
+                  description: Unique identifier of the user who created the record.
+                  visibility: Advanced
+                  order: 4
+                  type: String
+
+                _createdby_value@Microsoft.Dynamics.CRM.lookuplogicalname:
+                  displayName: Created By (Type)
+                  description: Unique identifier of the user who created the record.
+                  visibility: Advanced
+                  order: 3
+                  type: String
+
+                _createdonbehalfby_value:
+                  displayName: Created By (Delegate) (Value)
+                  description: Unique identifier of the delegate user who created the record.
+                  visibility: Advanced
+                  order: 2
+                  type: String
+
+                _createdonbehalfby_value@Microsoft.Dynamics.CRM.lookuplogicalname:
+                  displayName: Created By (Delegate) (Type)
+                  description: Unique identifier of the delegate user who created the record.
+                  visibility: Advanced
+                  order: 1
+                  type: String
+
+                _modifiedby_value:
+                  displayName: Modified By (Value)
+                  description: Unique identifier of the user who modified the record.
+                  visibility: Advanced
+                  order: 16
+                  type: String
+
+                _modifiedby_value@Microsoft.Dynamics.CRM.lookuplogicalname:
+                  displayName: Modified By (Type)
+                  description: Unique identifier of the user who modified the record.
+                  visibility: Advanced
+                  order: 15
+                  type: String
+
+                _modifiedonbehalfby_value:
+                  displayName: Modified By (Delegate) (Value)
+                  description: Unique identifier of the delegate user who modified the record.
+                  visibility: Advanced
+                  order: 14
+                  type: String
+
+                _modifiedonbehalfby_value@Microsoft.Dynamics.CRM.lookuplogicalname:
+                  displayName: Modified By (Delegate) (Type)
+                  description: Unique identifier of the delegate user who modified the record.
+                  visibility: Advanced
+                  order: 13
+                  type: String
+
+                _ownerid_value:
+                  displayName: Owner (Value)
+                  description: Owner Id
+                  visibility: Advanced
+                  order: 21
+                  type: String
+
+                _ownerid_value@Microsoft.Dynamics.CRM.lookuplogicalname:
+                  displayName: Owner (Type)
+                  description: Owner Id
+                  visibility: Advanced
+                  order: 20
+                  type: String
+
+                _owningbusinessunit_value:
+                  displayName: Owning Business Unit (Value)
+                  description: Unique identifier for the business unit that owns the record
+                  order: 23
+                  type: String
+
+                _owningbusinessunit_value@Microsoft.Dynamics.CRM.lookuplogicalname:
+                  displayName: Owning Business Unit (Type)
+                  description: Unique identifier for the business unit that owns the record
+                  order: 22
+                  type: String
+
+                _owningteam_value:
+                  displayName: Owning Team (Value)
+                  description: Unique identifier for the team that owns the record.
+                  visibility: Advanced
+                  order: 25
+                  type: String
+
+                _owningteam_value@Microsoft.Dynamics.CRM.lookuplogicalname:
+                  displayName: Owning Team (Type)
+                  description: Unique identifier for the team that owns the record.
+                  visibility: Advanced
+                  order: 24
+                  type: String
+
+                _owninguser_value:
+                  displayName: Owning User (Value)
+                  description: Unique identifier for the user that owns the record.
+                  visibility: Advanced
+                  order: 27
+                  type: String
+
+                _owninguser_value@Microsoft.Dynamics.CRM.lookuplogicalname:
+                  displayName: Owning User (Type)
+                  description: Unique identifier for the user that owns the record.
+                  visibility: Advanced
+                  order: 26
+                  type: String
+
+                @odata.id:
+                  displayName: OData Id
+                  description: OData row id
+                  order: 19
+                  type: String
+
+                cr640_additionaldetails:
+                  displayName: Additional Details
+                  visibility: Advanced
+                  order: 0
+                  type: String
+
+                cr640_customerdetailsid:
+                  displayName: Customer Details
+                  description: Unique identifier for entity instances
+                  visibility: Advanced
+                  order: 6
+                  type: String
+
+                cr640_dateofbirth:
+                  displayName: Date of Birth
+                  visibility: Advanced
+                  order: 7
+                  type: DateTime
+
+                cr640_email:
+                  displayName: Email
+                  visibility: Advanced
+                  order: 8
+                  type: String
+
+                cr640_gender:
+                  displayName: Gender
+                  visibility: Advanced
+                  order: 9
+                  dynamicValuesConfig:
+                    capability: List
+
+                  type: Number
+
+                cr640_isactive:
+                  displayName: Is Active
+                  visibility: Advanced
+                  order: 11
+                  type: Boolean
+
+                cr640_medicalid:
+                  displayName: MedicalID
+                  order: 12
+                  type: String
+
+                cr640_name:
+                  displayName: Name
+                  order: 18
+                  type: String
+
+                cr640_phone:
+                  displayName: Phone
+                  visibility: Advanced
+                  order: 28
+                  type: String
+
+                cr640_preexistingconditions:
+                  displayName: Preexisting Conditions
+                  visibility: Advanced
+                  order: 29
+                  type: String
+
+                createdon:
+                  displayName: Created On
+                  description: Date and time when the record was created.
+                  visibility: Advanced
+                  order: 5
+                  type: DateTime
+
+                importsequencenumber:
+                  displayName: Import Sequence Number
+                  description: Sequence number of the import that created this record.
+                  visibility: Advanced
+                  order: 10
+                  type: Number
+
+                modifiedon:
+                  displayName: Modified On
+                  description: Date and time when the record was modified.
+                  visibility: Advanced
+                  order: 17
+                  type: DateTime
+
+                overriddencreatedon:
+                  displayName: Record Created On
+                  description: Date and time that the record was migrated.
+                  visibility: Advanced
+                  order: 30
+                  type: DateTime
+
+                statecode:
+                  displayName: Status
+                  description: Status of the Customer Details
+                  visibility: Advanced
+                  order: 31
+                  dynamicValuesConfig:
+                    capability: List
+
+                  type: Number
+
+                statuscode:
+                  displayName: Status Reason
+                  description: Reason for the status of the Customer Details
+                  visibility: Advanced
+                  order: 32
+                  dynamicValuesConfig:
+                    capability: List
+
+                  type: Number
+
+                timezoneruleversionnumber:
+                  displayName: Time Zone Rule Version Number
+                  description: For internal use only.
+                  visibility: Advanced
+                  order: 33
+                  type: Number
+
+                utcconversiontimezonecode:
+                  displayName: UTC Conversion Time Zone Code
+                  description: Time zone code that was in use when the record was created.
+                  visibility: Advanced
+                  order: 34
+                  type: Number
+
+                versionnumber:
+                  displayName: Version Number
+                  description: Version Number
+                  visibility: Advanced
+                  order: 35
+                  type: Number
+
+      operationId: ListRecordsWithOrganization
+
+    - kind: SetVariable
+      id: setVariable_AJtlGU
+      variable: Topic.VarFilterTables
+      value: |
+        =ForAll(
+            Topic.varCustomerDetails.value,
+            {
+                Name: ThisRecord.cr640_name,
+                MedicalID: ThisRecord.cr640_medicalid,
+                PreExistingConditions: ThisRecord.cr640_preexistingconditions,
+                AdditionalDetails: ThisRecord.cr640_additionaldetails
+            }
+        )
+
+    - kind: SetVariable
+      id: setVariable_LQzrHy
+      variable: Topic.VarSerializedData
+      value: |
+        =Concat(Topic.VarFilterTables, Name & ": " & MedicalID & ":" & PreExistingConditions & " :" & AdditionalDetails)
+
+    - kind: InvokeAIBuilderModelAction
+      id: invokeAIBuilderModelAction_proHMv
+      input:
+        binding:
+          CreditCard: =Topic.checkCreditCard
+          Name: =Topic.checkName
+          PreExistingConditions: =Topic.checkConditions
+          SSN: =Topic.checkSSN
+          User_20Information: =Topic.VarSerializedData
+
+      output:
+        binding:
+          predictionOutput: Topic.VarPrediction
+
+      aIModelId: 8f3ddb4c-a28b-427a-9f0c-c158272963dd
+
+    - kind: SendActivity
+      id: SendActivity_OMyh6r
+      activity:
+        attachments:
+          - kind: HeroCardTemplate
+            title: PII Checker Results
+            text: =Topic.VarPrediction.text
+
+inputType: {}
+outputType: {}
